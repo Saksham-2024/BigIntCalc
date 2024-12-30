@@ -177,41 +177,40 @@ class calculator{
         return multiplied;
     }
 
-    calculator operator/(const calculator& divisor) const{
-         if (divisor.nums.size() == 0) {
-            throw invalid_argument("Division by zero is not allowed.");
-        }
-
-        calculator quotient, remainder;
-        int divisorSize = divisor.nums.size();
-        int i = 0;
-        calculator ten("10");
-        while (i < size()) {
-            remainder = remainder * ten;
-            remainder.nums.push_back(nums[i]);
-            i++;
-            while (remainder < divisor && i < size()) {
-                quotient.nums.push_back(0);
-                calculator digit(nums[i]);
-                remainder = remainder * ten;
-                remainder = remainder + digit;
-                i++;
-            }
-
-            int q = 0;
-            while (remainder >= divisor) {
-                remainder = remainder - divisor;
-                q++;
-            }
-            quotient.nums.push_back(q);
-        }
-
-        while (!quotient.nums.empty() && quotient.nums[0] == 0) {
-            quotient.nums.erase(quotient.nums.begin());
-        }
-
-        return quotient;
+    calculator operator/(const calculator& divisor) const {
+    if (divisor.nums.empty() || (divisor.nums.size() == 1 && divisor.nums[0] == 0)) {
+        throw invalid_argument("Division by zero is not allowed.");
     }
+
+    calculator quotient, remainder;
+    remainder.nums.clear();
+
+    for (int i = 0; i < nums.size(); ++i) {
+        remainder.nums.push_back(nums[i]);
+        
+        while (!remainder.nums.empty() && remainder.nums[0] == 0) {
+            remainder.nums.erase(remainder.nums.begin());
+        }
+
+        int q = 0;
+        while (remainder >= divisor) {
+            remainder = remainder - divisor;
+            ++q;
+        }
+        quotient.nums.push_back(q);
+    }
+        
+    while (!quotient.nums.empty() && quotient.nums[0] == 0) {
+        quotient.nums.erase(quotient.nums.begin());
+    }
+
+    if (quotient.nums.empty()) {
+        quotient.nums.push_back(0);
+    }
+
+    return quotient;
+}
+
 
 };
 
